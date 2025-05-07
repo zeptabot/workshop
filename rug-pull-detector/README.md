@@ -1,6 +1,6 @@
 # 🧪 Uniswap V2 Liquidity Pool Analyzer
 
-This python script is designed to analyze the token pairs characteristics using **Uniswap V2** smart contracts
+This tool is designed to analyze the token pairs characteristics using **Uniswap V2** smart contracts
 on **Base chain**.
 
 It inspects various characteristics of the tokens involved in each pair and prints key risk and health
@@ -58,11 +58,11 @@ indicators. The results are saved into a text report (`report.txt`) titled "TOKE
 - A text report saved as `report.txt` in the `data/outputs` directory
 - Title: `"TOKEN ANALYSIS REPORT"`
 
-## 🚀 Requirements
+#  Python
+##  Requirements
 
 - Python 3.8+
 - web3.py
-- Base chain RPC (e.g., `https://base.drpc.org`)
 
 ### Install dependencies:
 
@@ -70,12 +70,32 @@ indicators. The results are saved into a text report (`report.txt`) titled "TOKE
 pip install web3
 ```
 
-### 2. Use existing docker image `oceanprotocol/c2d_examples:py-general`:
+### Use existing docker image `oceanprotocol/c2d_examples:py-general`:
 
 For running the algorithm seamlessly, use our already-built docker image within the VS Code extension:
 
 - Docker image: `oceanprotocol/c2d_examples`
 - Docker tag: `py-general`
+
+#  JavaScript
+
+##  Requirements
+
+- Node.js
+- web3.js
+
+### Install dependencies:
+
+```bash
+npm install web3
+```
+
+### Use existing docker image `oceanprotocol/c2d_examples:js-general`:
+
+For running the algorithm seamlessly, use our already-built docker image within the VS Code extension:
+
+- Docker image: `oceanprotocol/c2d_examples`
+- Docker tag: `js-general`
 
 ## 🔐 Disclaimer
 
