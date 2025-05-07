@@ -72,16 +72,14 @@ pip install web3
 
 ### Use existing docker image `oceanprotocol/c2d_examples:py-general`:
 
-For running the algorithm seamlessly, use our already-built docker image within the VS Code extension:
-
 - Docker image: `oceanprotocol/c2d_examples`
 - Docker tag: `py-general`
 
-#  JavaScript
+#  Node.js
 
 ##  Requirements
 
-- Node.js
+- Node.js 18+
 - web3.js
 
 ### Install dependencies:
@@ -91,9 +89,6 @@ npm install web3
 ```
 
 ### Use existing docker image `oceanprotocol/c2d_examples:js-general`:
-
-For running the algorithm seamlessly, use our already-built docker image within the VS Code extension:
-
 - Docker image: `oceanprotocol/c2d_examples`
 - Docker tag: `js-general`
 

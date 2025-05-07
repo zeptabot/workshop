@@ -1,0 +1,13 @@
+{
+    "name": "image-processing-node",
+    "version": "1.0.0",
+    "description": "Image processing tool using Node.js",
+    "main": "image-processing.js",
+    "scripts": {
+        "start": "node image-processing.js"
+    },
+    "dependencies": {
+        "sharp": "^0.33.2",
+        "axios": "^1.6.7"
+    }
+}
