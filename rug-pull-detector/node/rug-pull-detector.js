@@ -244,7 +244,12 @@ async function generateReport(inputTokenAddress) {
 
   // Save to file
   const outputText = output.join("\n");
-  const txtFilename = path.join(__dirname, "/data/outputs/report.txt");
+  const outputPath = path.join("/data/outputs");
+  if (!fs.existsSync(outputPath)) {
+    fs.mkdirSync(outputPath, { recursive: true });
+  }
+
+  const txtFilename = path.join(outputPath, "report.txt");
   fs.writeFileSync(txtFilename, outputText);
 
   console.log(`✅ Output saved to ${txtFilename}\n`);

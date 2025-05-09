@@ -38,7 +38,7 @@ async function applyFilters(imageUrl, filter) {
 async function main() {
   const filteredImage = await applyFilters(imageUrl, "grayscale");
 
-  const outputDir = path.join("data", "outputs");
+  const outputDir = "data/outputs";
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
