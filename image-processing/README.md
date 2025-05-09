@@ -28,36 +28,21 @@ This tool is designed to apply various image filters to images using image proce
 
 - Processed image saved as `filtered_image.png` in the `/data/outputs` directory
 
-# Python
-## Requirements
-
-- Python 3.8+
-- Pillow (PIL)
-- requests
-
-### Install dependencies:
+## How to run your algorithm on Ocean Node
 
 ```bash
-pip install Pillow requests
+1. Open Ocean Protocol vscode-extension
+2. Select Algorithm file
+3. Select Results folder
+4. Press Start Compute Job
 ```
 
+# Python
 ### Use existing docker image `oceanprotocol/c2d_examples:py-general`:
 - Docker image: `oceanprotocol/c2d_examples`
 - Docker tag: `py-general`
 
 # Node
-## Requirements
-
-- Node.js 18+
-- sharp
-- axios
-
-### Install dependencies:
-
-```bash
-npm install sharp axios
-```
-
 ### Use existing docker image `oceanprotocol/c2d_examples:js-general`:
 - Docker image: `oceanprotocol/c2d_examples`
 - Docker tag: `js-general`

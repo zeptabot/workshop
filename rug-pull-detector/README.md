@@ -52,46 +52,32 @@ indicators. The results are saved into a text report (`report.txt`) titled "TOKE
 ``` 
 
 
-## 📁 Output
 
+
+## 📁 Output
 - Console output with all parameters per pair
 - A text report saved as `report.txt` in the `data/outputs` directory
 - Title: `"TOKEN ANALYSIS REPORT"`
 
-#  Python
-##  Requirements
-
-- Python 3.8+
-- web3.py
-
-### Install dependencies:
+## How to run your algorithm on Ocean Node
 
 ```bash
-pip install web3
+1. Open Ocean Protocol vscode-extension
+2. Select Algorithm file
+3. Select Results folder
+4. Press Start Compute Job
 ```
 
+#  Python
 ### Use existing docker image `oceanprotocol/c2d_examples:py-general`:
 
 - Docker image: `oceanprotocol/c2d_examples`
 - Docker tag: `py-general`
 
 #  Node.js
-
-##  Requirements
-
-- Node.js 18+
-- web3.js
-
-### Install dependencies:
-
-```bash
-npm install web3
-```
-
 ### Use existing docker image `oceanprotocol/c2d_examples:js-general`:
 - Docker image: `oceanprotocol/c2d_examples`
 - Docker tag: `js-general`
 
 ## 🔐 Disclaimer
-
 This tool is for research and educational purposes. It is not a financial advice tool.
