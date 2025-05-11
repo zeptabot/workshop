@@ -13,7 +13,7 @@ This tool calculates the average property prices by the number of rooms from a d
 4. Saves the summarized result to the output folder
 
 ## 📊 Example Property Structure
-
+```json
 {
 "ccy": "AED",
 "url": "https://www.bayut.com/property/details-5646432.html",
@@ -26,7 +26,7 @@ This tool calculates the average property prices by the number of rooms from a d
 "createdOn": "7 August 2023",
 "bathroomsNo": 5
 }
-
+```
 ## 📁 Input
 
 - Directory of JSON files containing Dubai property data
@@ -34,7 +34,7 @@ This tool calculates the average property prices by the number of rooms from a d
 ## 📁 Output
 
 - JSON file results.json saved to /data/outputs with average prices like:
-
+```json
 {
 "1": {
 "totalPrice": 1000000,
@@ -47,7 +47,7 @@ This tool calculates the average property prices by the number of rooms from a d
 "averagePrice": 1250000.0
 }
 }
-
+```
 ## How to run your algorithm on Ocean Node
 
 ```bash
