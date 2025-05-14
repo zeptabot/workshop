@@ -2,6 +2,7 @@ from web3 import Web3
 import datetime
 import io
 import sys
+from decimal import Decimal
 
 uniswap_v2_factory_abi = [  # Minimal ABI for Factory contract
     {
@@ -42,7 +43,9 @@ pair_abi = [
      "stateMutability": "view", "type": "function"},
     {"constant": True, "inputs": [], "name": "getReserves",
      "outputs": [{"name": "reserve0", "type": "uint112"}, {"name": "reserve1", "type": "uint112"},
-                 {"name": "blockTimestampLast", "type": "uint32"}], "stateMutability": "view", "type": "function"}
+                 {"name": "blockTimestampLast", "type": "uint32"}], "stateMutability": "view", "type": "function"},
+    {"constant": True, "inputs": [], "name": "decimals", "outputs": [{"name": "", "type": "uint8"}],
+     "stateMutability": "view", "type": "function"}
 ]
 
 token_abi = [
@@ -57,7 +60,9 @@ token_abi = [
         "outputs": [{"name": "", "type": "uint256"}],
         "stateMutability": "view",
         "type": "function"
-    }
+    },
+    {"constant": True, "inputs": [], "name": "decimals", "outputs": [{"name": "", "type": "uint8"}],
+     "stateMutability": "view", "type": "function"}
 ]
 
 BASE_RPC_URL = "https://base.drpc.org"  # Base RPC URL
@@ -68,134 +73,156 @@ if web3.is_connected():
     print("Connected to Base Chain")
 
 # Input token address 
-input_token_address = "0x768be13e1680b5ebe0024c42c896e3db59ec0149"
+input_token_address = "0x768BE13e1680b5ebE0024C42c896E3dB59ec0149"
 
 # Uniswap V2 Factory contract address 
 uniswap_v2_factory_address = "0x8909Dc15e40173Ff4699343b6eB8132c65e18eC6"
 
 # Do not change these. Will be used to find the pair with USDC or WETH
-USDC_contract = '0xd9AA594F65d163C22072c0eDFC7923A7F3470cC1'
+USDC_contract = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
 WETH_contract = '0x4200000000000000000000000000000000000006'
+ZERO_address = '0x0000000000000000000000000000000000000000'
 
 # Create contract instance for the Uniswap V2 Factory
 factory_contract = web3.eth.contract(address=web3.to_checksum_address(uniswap_v2_factory_address),
                                      abi=uniswap_v2_factory_abi)
 
-def calculate_market_cap(token_contract, token_symbol, reserve0, reserve1):
-    """
-    Calculate the market cap of a token based on its liquidity reserves.
-    This is an example function to show how to interact with token contracts.
-    """
-    try:
-        # Fetch total supply
-        total_supply = token_contract.functions.totalSupply().call()
+def get_token_decimals(token_address):
+    if token_address == USDC_contract:
+        return 6
+    if token_address == WETH_contract:
+        return 18
+    
+    token_contract = web3.eth.contract(address=web3.to_checksum_address(token_address), abi=token_abi)
+    return token_contract.functions.decimals().call()
 
-        # Determine price based on liquidity reserves
-        price_per_token = reserve1 / reserve0 if reserve0 > 0 else 0
+def get_token_total_supply(token_address):
+    token_contract = web3.eth.contract(address=web3.to_checksum_address(token_address), abi=token_abi)
+    return token_contract.functions.totalSupply().call()
 
-        # Calculate market cap
-        market_cap = total_supply * price_per_token
-
-        print(f"{token_symbol} Market Cap: ${market_cap:,.2f}")
-    except Exception as e:
-        print(f"Error calculating market cap: {e}")
-
-def check_minting_ability(token_contract, token_name):
-    """
-    Check if a token contract has minting capabilities.
-    This is an example function to show how to check contract functionality.
-    """
+def check_minting_ability(token_contract):
     try:
         token_contract.functions.mint().call()
-        print(f"Mint status: MINTABLE")
-        print(f"Total Supply Status: NOT FIXED")
+        return {"mintable": True, "supplyStatus": "NOT FIXED"}
     except:
-        print(f"Mint status: NOT MINTABLE")
-        print(f"Total Supply Status: FIXED")
-
-def new_check_one():
-    """
-    TODO: Implement another check
-    pass
-    """
-
-def new_check_two():
-    """
-    TODO: Implement another check
-    pass
-    """
-
+        return {"mintable": False, "supplyStatus": "FIXED"}
 
 def find_pair_by_token(token_address):
-    pair_address = factory_contract.functions.getPair(web3.to_checksum_address(token_address),
-                                                      web3.to_checksum_address(USDC_contract)).call()
-    if pair_address == '0x0000000000000000000000000000000000000000':
-        pair_address = factory_contract.functions.getPair(web3.to_checksum_address(token_address),
-                                                          web3.to_checksum_address(WETH_contract)).call()
-    if pair_address == '0x0000000000000000000000000000000000000000':
-        print(f"Pair could not be found for {token_address} backed by WETH or USDC.")
-        return
-    return pair_address
+    pair_address_usdc = factory_contract.functions.getPair(
+        web3.to_checksum_address(token_address),
+        web3.to_checksum_address(USDC_contract)
+    ).call()
+    
+    if pair_address_usdc != ZERO_address:
+        return {"pairAddress": pair_address_usdc, "quoteToken": "USDC"}
+    
+    pair_address_weth = factory_contract.functions.getPair(
+        web3.to_checksum_address(token_address),
+        web3.to_checksum_address(WETH_contract)
+    ).call()
+    
+    if pair_address_weth != ZERO_address:
+        return {"pairAddress": pair_address_weth, "quoteToken": "WETH"}
+    
+    return None
 
+def calculate_market_cap(pair_contract):
+    try:
+        reserves = pair_contract.functions.getReserves().call()
+        token0 = pair_contract.functions.token0().call()
+        token1 = pair_contract.functions.token1().call()
+        
+        token_total_supply = get_token_total_supply(token0)
+        
+        # Normalize values using decimals
+        reserve0_normalized = Decimal(reserves[0]) / Decimal(10 ** get_token_decimals(token0))
+        reserve1_normalized = Decimal(reserves[1]) / Decimal(10 ** get_token_decimals(token1))
+        price_per_token = reserve1_normalized / reserve0_normalized
+        total_supply_normalized = Decimal(token_total_supply) / Decimal(10 ** get_token_decimals(token0))
+        market_cap = total_supply_normalized * price_per_token
+        
+        return {
+            "reserves": reserves,
+            "token0": token0,
+            "token1": token1,
+            "pricePerToken": str(price_per_token),
+            "totalSupplyNormalized": str(total_supply_normalized),
+            "marketCap": str(market_cap)
+        }
+    except Exception as e:
+        print(f"Error calculating market cap: {e}")
+        return None
 
-
-pair_address = find_pair_by_token(token_address=input_token_address)
-if pair_address is None:
+# Main execution
+pair_info = find_pair_by_token(input_token_address)
+if pair_info is None:
     print("Pair could not be found! Quit execution of the algorithm...")
     quit()
+
+pair_address = pair_info["pairAddress"]
+pair_contract = web3.eth.contract(address=web3.to_checksum_address(pair_address), abi=pair_abi)
+
+# Get token addresses
+token0 = pair_contract.functions.token0().call()
+token1 = pair_contract.functions.token1().call()
+input_token = token0 if token0 != USDC_contract and token0 != WETH_contract else token1
+pair_token = token0 if token0 == USDC_contract or token0 == WETH_contract else token1
+
+# Create contract instances
+token_contract = web3.eth.contract(address=input_token, abi=token_abi)
+pair_token_contract = web3.eth.contract(address=pair_token, abi=token_abi)
 
 buffer = io.StringIO()
 sys.stdout = buffer
 
-# Add header and timestamp
 print("=" * 80)
 print("🔍 TOKEN ANALYSIS REPORT")
 print("=" * 80)
 print(f"Generated on: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 print("-" * 80)
+
+# Token Information
 print("\n📊 TOKEN INFORMATION")
 print("-" * 40)
-print(f"Token Address: {input_token_address}")
-
-pair_contract = web3.eth.contract(address=web3.to_checksum_address(pair_address), abi=pair_abi)
-
-# Get total supply of LP tokens
-total_lp_tokens = pair_contract.functions.totalSupply().call()
-print(f"Total Supply of LP Tokens: {total_lp_tokens}")
-
-# Get token addresses
-token_0 = pair_contract.functions.token0().call()
-token_1 = pair_contract.functions.token1().call()
-if token_0 != USDC_contract and token_0 != WETH_contract:
-    input_token = token_0
-else:
-    input_token = token_1
-token_contract = web3.eth.contract(address=input_token, abi=token_abi)
-
-# Get token names and symbols
+print(f"Token Address: {input_token}")
 token_name = token_contract.functions.name().call()
 token_symbol = token_contract.functions.symbol().call()
 print(f"Token Name: {token_name}")
 print(f"Token Symbol: {token_symbol}")
 
+# Pair Token Information
+print("\n🔄 PAIR TOKEN INFORMATION")
+print("-" * 40)
+print(f"Pair Token Address: {pair_token}")
+pair_token_name = pair_token_contract.functions.name().call()
+pair_token_symbol = pair_token_contract.functions.symbol().call()
+print(f"Pair Token Name: {pair_token_name}")
+print(f"Pair Token Symbol: {pair_token_symbol}")
+
+# Liquidity Information
 print("\n💧 LIQUIDITY INFORMATION")
 print("-" * 40)
 print(f"Liquidity Pair Address: {pair_address}")
+total_lp_tokens = pair_contract.functions.totalSupply().call()
 print(f"Total Supply of LP Tokens: {total_lp_tokens}")
 
+# Market Analysis
 print("\n💰 MARKET ANALYSIS")
 print("-" * 40)
+market_cap_data = calculate_market_cap(pair_contract)
+if market_cap_data:
+    print(f"Reserve {token_symbol}: {market_cap_data['reserves'][0]}")
+    print(f"Reserve {pair_token_symbol}: {market_cap_data['reserves'][1]}")
+    print(f"Price per {token_symbol}: {market_cap_data['pricePerToken']} {pair_token_symbol}")
+    print(f"Total Supply: {market_cap_data['totalSupplyNormalized']}")
+    print(f"Market Cap: {market_cap_data['marketCap']} {pair_token_symbol}")
 
-# Calculate market cap
-reserves = pair_contract.functions.getReserves().call()
-calculate_market_cap(token_contract=token_contract, token_symbol=token_symbol,
-                                    reserve0=reserves[0],
-                                    reserve1=reserves[1])
-
+# Supply Analysis
 print("\n🪄 SUPPLY ANALYSIS")
 print("-" * 40)
-# Check if each token from the pair is mintable
-check_minting_ability(token_contract, token_name)
+minting_status = check_minting_ability(token_contract)
+print(f"Mint Status: {'MINTABLE' if minting_status['mintable'] else 'NOT MINTABLE'}")
+print(f"Total Supply Status: {minting_status['supplyStatus']}")
 
 print("\n" + "=" * 80)
 print("End of Report")
