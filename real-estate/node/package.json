@@ -1,0 +1,14 @@
+{
+  "name": "real-estate-avg-price",
+  "version": "1.0.0",
+  "description": "Compute average real estate prices from remote JSON data.",
+  "main": "average-price.js",
+  "scripts": {
+    "start": "node average-price.js"
+  },
+  "author": "Ocean Protocol",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.8"
+  }
+}
