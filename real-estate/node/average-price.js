@@ -1,7 +1,7 @@
 const fs = require("fs");
 const axios = require('axios');
 
-const jsonUrl = 'https://raw.githubusercontent.com/oceanprotocol/workshop/add-real-estate/real-estate/data.json';
+const jsonUrl = 'https://raw.githubusercontent.com/bogdanfazakas/datasets/refs/heads/main/data.json';
 var output_folder = "/data/outputs";
 computeAvgPrice(jsonUrl)
 
@@ -27,11 +27,10 @@ async function  computeAvgPrice(filepath) {
     const response = await axios.get(filepath);
     const properties = response.data;
 
-    if (!Array.isArray(listings)) {
+    console.log(`Properties: ${JSON.stringify(properties)}`);
+    if (!Array.isArray(properties)) {
       throw new Error('Expected JSON to be an array.');
     }
-
-    console.log(`Properties: ${properties}`);
 
     const avgPricesByRooms = {};
 
@@ -62,5 +61,5 @@ async function  computeAvgPrice(filepath) {
 
     fs.writeFileSync(outputFile, JSON.stringify(avgPricesByRooms, null, 2));
 
-    console.log(`Avg prices: ${avgPricesByRooms}`);
+    console.log(`Avg prices: ${JSON.stringify(avgPricesByRooms)}`);
 }

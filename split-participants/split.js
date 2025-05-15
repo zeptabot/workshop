@@ -2,7 +2,7 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 
-const jsonUrl = "const jsonUrl = 'https://raw.githubusercontent.com/oceanprotocol/workshop/add-real-estate/split-participants/participants.json';";
+const jsonUrl = 'https://raw.githubusercontent.com/bogdanfazakas/datasets/refs/heads/main/participants.json';
 const outputPath = "/data/outputs/grouped_users.json";
 
 const GROUPS = ["image-processing", "real-estate", "rug-pull-analyser"];
