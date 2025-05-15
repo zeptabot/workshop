@@ -1,57 +1,54 @@
-import os
+import requests
 import json
+import os
 
-input_folder = "/data/inputs"
-output_folder = "/data/outputs"
+json_url = 'https://raw.githubusercontent.com/oceanprotocol/workshop/add-real-estate/real-estate/data.json'
+output_folder = '/data/outputs'
+output_file = os.path.join(output_folder, 'results.json')
 
-def compute_avg_price(filepath):
-    with open(filepath, 'r', encoding='utf-8') as f:
-        properties = json.load(f)
-
-    print(f"Properties: {properties}")
-
-    avg_prices_by_rooms = {}
-
-    for property in properties:
-        info = property.get('info', {})
-        price = info.get('price')
-        rooms_no = info.get('roomsNo')
-
-        if rooms_no not in avg_prices_by_rooms:
-            avg_prices_by_rooms[rooms_no] = {
-                'totalPrice': 0,
-                'count': 0,
-            }
-
-        avg_prices_by_rooms[rooms_no]['totalPrice'] += price
-        avg_prices_by_rooms[rooms_no]['count'] += 1
-
-    for rooms_no in avg_prices_by_rooms:
-        total = avg_prices_by_rooms[rooms_no]['totalPrice']
-        count = avg_prices_by_rooms[rooms_no]['count']
-        avg = round(total / count, 2)
-        avg_prices_by_rooms[rooms_no]['averagePrice'] = avg
-
-    os.makedirs(output_folder, exist_ok=True)
-    output_file = os.path.join(output_folder, "results.json")
-
-    with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(avg_prices_by_rooms, f, indent=2)
-
-    print(f"Avg prices: {avg_prices_by_rooms}")
-
-def process_folder(path):
+def compute_avg_price_by_rooms(url):
     try:
-        files = os.listdir(path)
-        print(f"files: {files}")
-        for file in files:
-            full_path = os.path.join(path, file)
-            if os.path.isdir(full_path):
-                process_folder(full_path)
-            else:
-                print(f"path to file: {full_path}")
-                compute_avg_price(full_path)
-    except Exception as e:
-        print(f"Error processing folder {path}: {e}")
+        response = requests.get(url)
+        response.raise_for_status()
+        properties = response.json()
 
-process_folder(input_folder)
+        if not isinstance(properties, list):
+            raise ValueError("Expected JSON to be a list")
+
+        avg_prices_by_rooms = {}
+
+        for prop in properties:
+            info = prop.get("info", {})
+            price = info.get("price")
+            rooms_no = info.get("roomsNo")
+
+            if price is None or rooms_no is None:
+                continue
+
+            if rooms_no not in avg_prices_by_rooms:
+                avg_prices_by_rooms[rooms_no] = {
+                    "totalPrice": 0,
+                    "count": 0
+                }
+
+            avg_prices_by_rooms[rooms_no]["totalPrice"] += price
+            avg_prices_by_rooms[rooms_no]["count"] += 1
+
+        # Finalize average calculation
+        for rooms_no, stats in avg_prices_by_rooms.items():
+            avg = stats["totalPrice"] / stats["count"]
+            avg_prices_by_rooms[rooms_no]["averagePrice"] = round(avg, 2)
+
+        # Write to output file
+        os.makedirs(output_folder, exist_ok=True)
+        with open(output_file, "w") as f:
+            json.dump(avg_prices_by_rooms, f, indent=2)
+
+        print("✅ Results written to:", output_file)
+        print("📊 Avg Prices by Rooms:", avg_prices_by_rooms)
+
+    except Exception as e:
+        print(f"❌ Error: {str(e)}")
+
+# Run it
+compute_avg_price_by_rooms(json_url)

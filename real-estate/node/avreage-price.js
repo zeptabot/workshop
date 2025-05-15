@@ -1,28 +1,35 @@
 const fs = require("fs");
+const axios = require('axios');
 
-var input_folder = "/data/inputs";
+const jsonUrl = 'https://raw.githubusercontent.com/oceanprotocol/workshop/add-real-estate/real-estate/data.json';
 var output_folder = "/data/outputs";
+computeAvgPrice(jsonUrl)
 
-async function processfolder(Path) {
-    var files = fs.readdirSync(Path);
-    console.log(`files: ${files}`)
-    for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        var fullpath = Path + "/" + file;
-        if (fs.statSync(fullpath).isDirectory()) {
-            await processfolder(fullpath);
-        } else {
-            console.log(`path to file: ${fullpath}`)
-            computeAvgPrice(fullpath);
-        }
+// put back for running with datasets from container
+// var input_folder = "/data/inputs";
+// async function processfolder(Path) {
+//     var files = fs.readdirSync(Path);
+//     console.log(`files: ${files}`)
+//     for (var i = 0; i < files.length; i++) {
+//         var file = files[i];
+//         var fullpath = Path + "/" + file;
+//         if (fs.statSync(fullpath).isDirectory()) {
+//             await processfolder(fullpath);
+//         } else {
+//             console.log(`path to file: ${fullpath}`)
+//             computeAvgPrice(fullpath);
+//         }
+//     }
+// }
+// processfolder(input_folder);
+
+async function  computeAvgPrice(filepath) {
+    const response = await axios.get(filepath);
+    const properties = response.data;
+
+    if (!Array.isArray(listings)) {
+      throw new Error('Expected JSON to be an array.');
     }
-}
-processfolder(input_folder);
-
-function computeAvgPrice(filepath) {
-    const properties = JSON.parse(
-        fs.readFileSync(filepath, "utf8")
-    );
 
     console.log(`Properties: ${properties}`);
 
