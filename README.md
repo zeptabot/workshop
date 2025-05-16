@@ -68,6 +68,7 @@ Price prediction real estate (track 1)
 - Adam
 - Akshat
 - Shaun geer
+- Aarnavi
 
 Image processing (track 2)
 - Arafat
@@ -85,6 +86,5 @@ Rug-pull detector (track 3)
 - Jay
 - Rakesh
 - Pevithran
-- Aarnavi
 - Johnas
 
