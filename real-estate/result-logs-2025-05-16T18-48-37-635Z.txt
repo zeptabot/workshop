@@ -1,0 +1,4 @@
+  File "//data/transformations/algorithm", line 57
+    pip install requests pandas scikit-learn
+        ^^^^^^^
+SyntaxError: invalid syntax
