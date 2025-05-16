@@ -1,2 +1,0 @@
-✅ Results written to: /data/outputs/results.json
-📊 Avg Prices by Rooms: {4: {'totalPrice': 25795000, 'count': 6, 'averagePrice': 4299166.67}, 3: {'totalPrice': 15250000, 'count': 4, 'averagePrice': 3812500.0}, 5: {'totalPrice': 45750000, 'count': 3, 'averagePrice': 15250000.0}, 1: {'totalPrice': 7150000, 'count': 4, 'averagePrice': 1787500.0}, 2: {'totalPrice': 11275000, 'count': 4, 'averagePrice': 2818750.0}, 6: {'totalPrice': 21400000, 'count': 1, 'averagePrice': 21400000.0}}

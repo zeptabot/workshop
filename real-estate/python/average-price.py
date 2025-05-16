@@ -69,7 +69,6 @@ output_folder = '/data/outputs'
 output_file = os.path.join(output_folder, 'results.json')
 
 
-
 def load_and_prepare_data(url):
     response = requests.get(url)
     response.raise_for_status()
@@ -140,13 +139,24 @@ rf.fit(X_train, y_train)
 # Predict on test set
 y_pred = rf.predict(X_test)
 
-# Save predictions and actual values to output file
+# Prepare terminal output
+sample_predictions_df = pd.DataFrame({"Actual": y_test, "Predicted": y_pred}).head()
+r2 = r2_score(y_test, y_pred)
+terminal_output = [
+    f"✅ Random Forest predictions written to: {output_file}",
+    "📊 Sample predictions:\n" + sample_predictions_df.to_string(index=False),
+    f"R^2 prediction accuracy: {r2:.4f}"
+]
+print("\n".join(terminal_output))
+
+
+# Save everything to output file
 os.makedirs(output_folder, exist_ok=True)
-results = pd.DataFrame({"Actual": y_test, "Predicted": y_pred})
-results.to_json(output_file, orient="records", indent=2)
-
-print("✅ Random Forest predictions written to:", output_file)
-print("📊 Sample predictions:\n", results.head())
-
-
-print("R^2 prediction accuracy:", r2_score(y_test, y_pred))
+with open(output_file, "w") as f:
+    json.dump({
+        "R^2 prediction accuracy": r2,
+        "results": [
+            {"Actual": float(a), "Predicted": float(p)}
+            for a, p in zip(y_test, y_pred)
+        ]
+    }, f, indent=2)
