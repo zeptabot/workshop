@@ -2,7 +2,7 @@ import requests
 import json
 import os
 
-json_url = 'https://raw.githubusercontent.com/oceanprotocol/workshop/add-real-estate/real-estate/data.json'
+json_url = 'https://raw.githubusercontent.com/bogdanfazakas/datasets/refs/heads/main/data.json'
 output_folder = '/data/outputs'
 output_file = os.path.join(output_folder, 'results.json')
 
