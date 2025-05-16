@@ -59,3 +59,32 @@ Stay connected with us through our community channels:
 - Telegram: [Join our Telegram group](https://t.me/+XQOKuXM0kNA3NDE0)
 - Discord: [Join our Discord server](https://discord.gg/CQ2PQnKe)
 
+Tracks:
+Price prediction real estate (track 1)
+- Zeptabot
+- Godwin woo
+- Rong kai wong
+- Youlian
+- Adam
+- Akshat
+- Shaun geer
+
+Image processing (track 2)
+- Arafat
+- Akash kumar
+- Rambod
+- Mulham
+- Anabele
+- Ben far
+- Bob
+
+Rug-pull detector (track 3)
+- Youske 
+- Daniel Silver
+- Ravi
+- Jay
+- Rakesh
+- Pevithran
+- Aarnavi
+- Johnas
+
