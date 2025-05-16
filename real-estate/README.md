@@ -4,11 +4,13 @@ This tool calculates the average property prices by the number of rooms from a d
 
 ## 🔍 What the Script Does
 
-1. Recursively traverses a directory to locate JSON files
-2. Each file contains real estate listings with:
+1. Fetch the remote JSON file
+2. Loaded file contains real estate listings with:
    - price
    - zone
    - nr of rooms
+   - surface
+   - nr of bathrooms
 3. Computes the average property price grouped by roomsNo
 4. Saves the summarized result to the output folder
 
