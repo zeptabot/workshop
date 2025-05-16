@@ -72,3 +72,4 @@ This tool calculates the average property prices by the number of rooms from a d
 
 - Docker image: `oceanprotocol/c2d_examples`
 - Docker tag: `js-general`
+### Zeptabot (Brad) : I improved the prediction accuracy by using a Random Forest Regressor ML algorithm, incorporating all meaningful features, and implemented a 80: 20 Train-Test Split. I achieved a high prediction accuracy with a Coefficient of determination of 82.5% through this approach.
